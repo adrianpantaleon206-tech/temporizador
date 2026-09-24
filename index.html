@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de Despegue</title>
+  <style>
+    :root {
+      --bg-black: #030305;
+      --card-bg: rgba(10, 12, 18, 0.92);
+      --neon-orange: #ff5500;
+      --orange-glow: #ff7700;
+      --cyber-cyan: #00f0ff;
+      --text-gray: #a0a5b5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-black);
+      color: #ffffff;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Fondo de Estrellas */
+    .stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 50%;
+      animation: twinkle var(--duration) infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* Contenedor Principal */
+    .main-container {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 460px;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 1.4rem;
+      letter-spacing: 5px;
+      color: var(--text-gray);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Tarjeta Futurista */
+    .timer-card {
+      background: var(--card-bg);
+      border: 2px solid var(--neon-orange);
+      border-radius: 20px;
+      padding: 40px 25px;
+      box-shadow: 0 0 35px rgba(255, 85, 0, 0.25),
+                  inset 0 0 20px rgba(255, 85, 0, 0.1);
+      backdrop-filter: blur(12px);
+      position: relative;
+    }
+
+    /* Bordes laterales y luces LED */
+    .timer-card::before, .timer-card::after {
+      content: '';
+      position: absolute;
+      top: 20%;
+      height: 60%;
+      width: 5px;
+      background: var(--neon-orange);
+      box-shadow: 0 0 10px var(--orange-glow);
+    }
+
+    .timer-card::before { left: -8px; border-radius: 4px 0 0 4px; }
+    .timer-card::after { right: -8px; border-radius: 0 4px 4px 0; }
+
+    .side-light {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: var(--cyber-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyber-cyan);
+      animation: sidePulse 2s infinite alternate;
+    }
+
+    .side-light.left-top { top: 15px; left: 12px; }
+    .side-light.right-top { top: 15px; right: 12px; }
+    .side-light.left-bottom { bottom: 15px; left: 12px; }
+    .side-light.right-bottom { bottom: 15px; right: 12px; }
+
+    @keyframes sidePulse {
+      0% { opacity: 0.3; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Números Naranja Fosforescente */
+    .timer-display {
+      font-size: 5.5rem;
+      font-weight: 900;
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--neon-orange);
+      text-shadow: 0 0 12px var(--neon-orange),
+                   0 0 25px var(--orange-glow),
+                   0 0 50px var(--orange-glow);
+      margin-bottom: 25px;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 14px 30px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-start {
+      background-color: var(--neon-orange);
+      color: #000000;
+      box-shadow: 0 0 20px rgba(255, 85, 0, 0.4);
+    }
+
+    .btn-start:hover:not(:disabled) {
+      background-color: #ff7722;
+      box-shadow: 0 0 30px var(--neon-orange);
+      transform: translateY(-2px);
+    }
+
+    .btn-start:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-reset {
+      background-color: transparent;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-reset:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: #ffffff;
+    }
+
+    /* Escena del Cohete y Explosión */
+    .hidden {
+      display: none !important;
+    }
+
+    .rocket-scene {
+      position: relative;
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .rocket {
+      font-size: 6rem;
+      display: inline-block;
+      filter: drop-shadow(0 0 15px var(--neon-orange));
+    }
+
+    .rocket.launching {
+      animation: launch 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .launch-message {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--neon-orange);
+      text-shadow: 0 0 15px var(--orange-glow), 0 0 30px var(--neon-orange);
+      margin-top: 15px;
+      animation: pulseMessage 1.2s infinite alternate;
+    }
+
+    .explosion-particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      animation: explode 1s ease-out forwards;
+      z-index: 100;
+    }
+
+    @keyframes launch {
+      0% { transform: translateY(0) scale(1); }
+      15% { transform: translateY(12px) scale(0.95); }
+      100% { transform: translateY(-700px) scale(1.6); opacity: 0; }
+    }
+
+    @keyframes pulseMessage {
+      0% { opacity: 0.6; transform: scale(0.96); }
+      100% { opacity: 1; transform: scale(1.04); }
+    }
+
+    @keyframes explode {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fondo de Estrellas -->
+  <div id="starsContainer" class="stars-container"></div>
+
+  <!-- Interfaz Principal -->
+  <div class="main-container">
+    <h1 class="title">Inicio de Despegue</h1>
+    
+    <div class="timer-card">
+      <div class="side-light left-top"></div>
+      <div class="side-light right-top"></div>
+      <div class="side-light left-bottom"></div>
+      <div class="side-light right-bottom"></div>
+
+      <div id="timerDisplay" class="timer-display">00:30</div>
+      
+      <div class="controls">
+        <button id="startBtn" class="btn btn-start">DESPEGAR</button>
+        <button id="resetBtn" class="btn btn-reset">REINICIAR</button>
+      </div>
+
+      <!-- Escena del Cohete -->
+      <div id="rocketScene" class="rocket-scene hidden">
+        <div id="rocket" class="rocket">🚀</div>
+        <div class="launch-message">¡BUEN VIAJE AL ESPACIO!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script integrado para asegurar arranque inmediato -->
+  <script>
+    const timerDisplay = document.getElementById('timerDisplay');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const rocketScene = document.getElementById('rocketScene');
+    const rocket = document.getElementById('rocket');
+    const starsContainer = document.getElementById('starsContainer');
+
+    let countdownInterval = null;
+    let remainingSeconds = 30;
+    const INITIAL_SECONDS = 30;
+
+    // 1. Generador de Estrellas
+    function createStars() {
+      starsContainer.innerHTML = '';
+      for (let i = 0; i < 130; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        const size = Math.random() * 3 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.setProperty('--duration', `${Math.random() * 3 + 1.5}s`);
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // 2. Expresión Regular para formatear MM:SS
+    function formatTimeWithRegex(totalSeconds) {
+      const mins = Math.floor(totalSeconds / 60);
+      const secs = totalSeconds % 60;
+
+      const formattedMins = String(mins).replace(/^(\d)$/, '0$1');
+      const formattedSecs = String(secs).replace(/^(\d)$/, '0$1');
+
+      return `${formattedMins}:${formattedSecs}`;
+    }
+
+    // 3. Explosión de partículas
+    function createExplosion(x, y) {
+      const colors = ['#ff5500', '#ff7700', '#ffcc00', '#ffffff', '#00f0ff'];
+      for (let i = 0; i < 70; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('explosion-particle');
+        const size = Math.random() * 8 + 4;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.boxShadow = `0 0 12px ${particle.style.backgroundColor}`;
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 200 + 60;
+        const dx = Math.cos(angle) * velocity;
+        const dy = Math.sin(angle) * velocity;
+
+        particle.style.setProperty('--dx', `${dx}px`);
+        particle.style.setProperty('--dy', `${dy}px`);
+
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1000);
+      }
+    }
+
+    // 4. Control del Temporizador
+    function startTimer() {
+      if (countdownInterval !== null) return;
+
+      rocketScene.classList.add('hidden');
+      rocket.classList.remove('launching');
+      startBtn.disabled = true;
+
+      countdownInterval = setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          timerDisplay.textContent = formatTimeWithRegex(remainingSeconds);
+        } else {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+          startBtn.disabled = false;
+          
+          rocketScene.classList.remove('hidden');
+          
+          rocket.classList.remove('launching');
+          void rocket.offsetWidth; 
+          rocket.classList.add('launching');
+
+          const rect = rocket.getBoundingClientRect();
+          createExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      startBtn.disabled = false;
+      remainingSeconds = INITIAL_SECONDS;
+      timerDisplay.textContent = formatTimeWithRegex(remainingSeconds);
+      rocketScene.classList.add('hidden');
+      rocket.classList.remove('launching');
+    }
+
+    // Inicializar
+    createStars();
+    timerDisplay.textContent = formatTimeWithRegex(INITIAL_SECONDS);
+    startBtn.addEventListener('click', startTimer);
+    resetBtn.addEventListener('click', resetTimer);
+  </script>
+</body>
+</html>
