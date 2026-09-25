@@ -79,7 +79,7 @@
       background: var(--card-bg);
       border: 2px solid var(--neon-orange);
       border-radius: 20px;
-      padding: 40px 25px;
+      padding: 40px 25px 30px 25px;
       box-shadow: 0 0 35px rgba(255, 85, 0, 0.25),
                   inset 0 0 20px rgba(255, 85, 0, 0.1);
       backdrop-filter: blur(12px);
@@ -181,6 +181,22 @@
       border-color: #ffffff;
     }
 
+    /* Firma del Desarrollador */
+    .developer-credit {
+      margin-top: 25px;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .developer-credit span {
+      color: var(--cyber-cyan);
+      font-weight: 700;
+      text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+    }
+
     /* Escena del Cohete y Explosión */
     .hidden {
       display: none !important;
@@ -260,6 +276,11 @@
         <button id="resetBtn" class="btn btn-reset">REINICIAR</button>
       </div>
 
+      <!-- Firma en la parte inferior de la tarjeta -->
+      <div class="developer-credit">
+        Desarrollado por <span>Adrián Pantaleón</span>
+      </div>
+
       <!-- Escena del Cohete -->
       <div id="rocketScene" class="rocket-scene hidden">
         <div id="rocket" class="rocket">🚀</div>
@@ -268,7 +289,7 @@
     </div>
   </div>
 
-  <!-- Script integrado para asegurar arranque inmediato -->
+  <!-- Script integrado -->
   <script>
     const timerDisplay = document.getElementById('timerDisplay');
     const startBtn = document.getElementById('startBtn');
